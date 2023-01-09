@@ -15,6 +15,8 @@ env:
 jobs:
   pre-commit:
     runs-on: ubuntu-22.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
@@ -24,6 +26,13 @@ jobs:
 
     - name: Install checkov
       run: pip install -r requirements.txt
+
+    - name: Install terraform-docs
+      uses: jaxxstorm/action-install-gh-release@v1.9.0
+      with:
+        repo: terraform-docs/terraform-docs
+        tag: ${{ env.TERRAFORM_DOCS_VERSION }}
+        cache: enable
 
     - name: TFLint cache
       uses: actions/cache@v3
@@ -35,15 +44,6 @@ jobs:
       uses: terraform-linters/setup-tflint@v2
       with:
         tflint_version: ${{ env.TFLINT_VERSION }}
-
-    - name: Install terraform-docs
-      uses: jaxxstorm/action-install-gh-release@v1.9.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        repo: terraform-docs/terraform-docs
-        tag: ${{ env.TERRAFORM_DOCS_VERSION }}
-        cache: enable
 
     - name: Run pre-commit
       uses: pre-commit/action@v3.0.0
