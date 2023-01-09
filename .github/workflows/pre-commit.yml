@@ -8,6 +8,7 @@ on:
       - master
 
 env:
+  PYTHON_VERSION: "3.10"
   TERRAFORM_DOCS_VERSION: "v0.16.0"
   TFLINT_VERSION: "v0.40.1"
   CHECKOV_VERSION: "2.2.158"
@@ -17,28 +18,29 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/setup-python@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: pip
 
     - name: Install additional pre-commit hooks
-      shell: bash
       run: |
         echo "########### Install Checkov ####################"
         pip install checkov==${{ env.CHECKOV_VERSION }}
 
-        echo "########### Install Terraform-docs #############"
-        wget https://github.com/terraform-docs/terraform-docs/releases/download/${{ env.TERRAFORM_DOCS_VERSION }}/terraform-docs-${{ env.TERRAFORM_DOCS_VERSION }}-linux-amd64.tar.gz
-        tar xvzf terraform-docs-${{ env.TERRAFORM_DOCS_VERSION }}-linux-amd64.tar.gz
-        mkdir -p ~/terraform-docs/bin/
-        install terraform-docs ~/terraform-docs/bin/
-        echo '~/terraform-docs/bin/' >> $GITHUB_PATH
+    - uses: lablabs/setup-terraform-docs@v1
+      with:
+        terraform_docs_version: ${{ env.TERRAFORM_DOCS_VERSION }}
 
-        echo "########### Install Terraform-linters ##########"
-        wget https://github.com/terraform-linters/tflint/releases/download/${{ env.TFLINT_VERSION }}/tflint_linux_amd64.zip
-        unzip tflint_linux_amd64.zip
-        mkdir -p ~/tflint/bin/
-        echo '~/tflint/bin/' >> $GITHUB_PATH
-        install tflint ~/tflint/bin/
-        ~/tflint/bin/tflint --init
+    - name: TFLint cache plugin dir
+      uses: actions/cache@v2
+      with:
+        path: ~/.tflint.d/plugins
+        key: tflint-${{ hashFiles('.tflint.hcl') }}
+
+    - uses: terraform-linters/setup-tflint@v2
+      with:
+        tflint_version: ${{ env.TFLINT_VERSION }}
 
     - name: Run pre-commit
       uses: pre-commit/action@v3.0.0
