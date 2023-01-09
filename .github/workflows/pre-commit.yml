@@ -25,13 +25,13 @@ jobs:
     - name: python lib cache
       uses: actions/cache@v3
       with:
-        path: {{ .env.LD_LIBRARY_PATH }}/lib/python${{ env.PYTHON_VERSION }}/site-packages
+        path: ${{ env.pythonLocation }}/lib/python${{ env.PYTHON_VERSION }}/site-packages
         key: ${{ runner.os }}-python-lib-${{ hashFiles('**/requirements.txt') }}
 
     - name: python lib scripts
       uses: actions/cache@v3
       with:
-        path: {{ .env.LD_LIBRARY_PATH }}/Scripts
+        path: ${{ env.pythonLocation }}/Scripts
         key: ${{ runner.os }}-python-scripts-${{ hashFiles('**/requirements.txt') }}
 
     - run: pip install -r requirements.txt
