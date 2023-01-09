@@ -22,19 +22,14 @@ jobs:
         python-version: ${{ env.PYTHON_VERSION }}
         cache: pip
 
-    - name: python lib cache
+    - name: Python lib cache
       uses: actions/cache@v3
       with:
         path: ${{ env.pythonLocation }}/lib/python${{ env.PYTHON_VERSION }}/site-packages
-        key: ${{ runner.os }}-python-lib-${{ hashFiles('**/requirements.txt') }}
+        key: ${{ runner.os }}-python${{ env.PYTHON_VERSION }}-lib-${{ hashFiles('**/requirements.txt') }}
 
-    - name: python lib scripts
-      uses: actions/cache@v3
-      with:
-        path: ${{ env.pythonLocation }}/Scripts
-        key: ${{ runner.os }}-python-scripts-${{ hashFiles('**/requirements.txt') }}
-
-    - run: pip install -r requirements.txt
+    - name: Install checkov
+      run: pip install -r requirements.txt
 
     - name: TFLint cache
       uses: actions/cache@v3
@@ -42,13 +37,17 @@ jobs:
         path: ~/.tflint.d/plugins
         key: ${{ runner.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
 
+    - name: Install TFLint
     - uses: terraform-linters/setup-tflint@v2
       with:
         tflint_version: ${{ env.TFLINT_VERSION }}
 
-    - uses: lablabs/setup-terraform-docs@v1.0.4
+    - name: Install terraform-docs
+      uses: jaxxstorm/action-install-gh-release@v1.5.0
       with:
-        terraform_docs_version: ${{ env.TERRAFORM_DOCS_VERSION }}
+        repo: terraform-docs/terraform-docs
+        tag: ${{ env.TERRAFORM_DOCS_VERSION }}
+        cache: enable
 
     - name: Run pre-commit
       uses: pre-commit/action@v3.0.0
