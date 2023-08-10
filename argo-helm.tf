@@ -91,16 +91,15 @@ resource "kubernetes_job" "helm_argo_application_wait" {
   count = local.helm_argo_application_wait_enabled ? 1 : 0
 
   metadata {
-    name        = "${var.helm_release_name}-argo-application-wait"
-    namespace   = var.argo_namespace
-    labels      = local.argo_application_metadata.labels
-    annotations = local.argo_application_metadata.annotations
+    generate_name = "${var.helm_release_name}-argo-application-wait"
+    namespace     = var.argo_namespace
+    labels        = local.argo_application_metadata.labels
+    annotations   = local.argo_application_metadata.annotations
   }
 
   spec {
     template {
       metadata {
-        name        = "${var.helm_release_name}-argo-application-wait"
         labels      = local.argo_application_metadata.labels
         annotations = local.argo_application_metadata.annotations
       }
