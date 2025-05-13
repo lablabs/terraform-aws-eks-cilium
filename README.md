@@ -1,5 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
-# AWS EKS Cilium Terraform modul
+# AWS EKS Cilium Terraform module
 
 A Terraform module to deploy the [Cilium](https://cilium.io/) on Amazon EKS cluster.
 
