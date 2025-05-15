@@ -9,7 +9,8 @@
 
 locals {
   addon = {
-    name = "cilium"
+    name      = "cilium"
+    namespace = "kube-system"
 
     helm_chart_version = "1.15.8"
     helm_repo_url      = "https://helm.cilium.io"
