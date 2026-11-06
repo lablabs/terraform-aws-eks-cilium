@@ -12,7 +12,7 @@ locals {
     name      = "cilium"
     namespace = "kube-system"
 
-    helm_chart_version = "1.15.8"
+    helm_chart_version = "1.20.4" # 1.20.4
     helm_repo_url      = "https://helm.cilium.io"
   }
 
